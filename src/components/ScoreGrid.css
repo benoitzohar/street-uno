@@ -1,0 +1,15 @@
+#score-grid .header {
+  background-color: #ccc;
+  color: black;
+  text-transform: capitalize;
+}
+
+#score-grid .empty {
+  text-align: center;
+  padding: 5px;
+}
+
+#score-grid .total {
+  background-color: #ccc;
+  color: black;
+}

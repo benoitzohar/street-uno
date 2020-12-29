@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import { RouteComponentProps } from "react-router";
 import {
   IonBackButton,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonLoading,
+  IonModal,
   IonPage,
   IonToolbar,
 } from "@ionic/react";
 import "./ViewGame.css";
+import ScoreGrid from "../components/ScoreGrid";
+import { useGame } from "../data/games";
+import ScoreInput from "../components/ScoreInput";
 
-const ViewGame: React.FC = () => {
+export default function ViewGame({ match }: RouteComponentProps) {
+  //@ts-ignore
+  const id = match.params.id;
+  const game = useGame(id);
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <IonPage id="new-game">
       <IonHeader translucent>
@@ -19,9 +31,28 @@ const ViewGame: React.FC = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>View game</IonContent>
+
+      <IonContent fullscreen>
+        <IonLoading isOpen={!game} message={"Loading..."} />
+        <ScoreGrid scores={game?.scores ?? {}} />
+        <IonButton
+          color="primary"
+          expand="full"
+          onClick={() => setShowModal(true)}
+        >
+          New round
+        </IonButton>
+      </IonContent>
+
+      <IonModal isOpen={showModal}>
+        {game?.players && (
+          <ScoreInput
+            id={id}
+            players={game.players}
+            closeModal={() => setShowModal(false)}
+          />
+        )}
+      </IonModal>
     </IonPage>
   );
-};
-
-export default ViewGame;
+}

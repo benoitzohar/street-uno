@@ -1,10 +1,12 @@
 import React from "react";
+import { RouteComponentProps } from "react-router";
 import { useGames } from "../data/games";
 import {
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonItem,
   IonList,
   IonPage,
   IonTitle,
@@ -12,7 +14,7 @@ import {
 } from "@ionic/react";
 import "./Home.css";
 
-const Home: React.FC = () => {
+export default function Home({ history }: RouteComponentProps) {
   const games = useGames();
 
   return (
@@ -34,12 +36,15 @@ const Home: React.FC = () => {
 
         <IonList>
           {games.map((game) => (
-            <div>{game.date}</div>
+            <IonItem
+              key={game.id}
+              onClick={() => history.push(`/game/${game.id}`)}
+            >
+              {game.date.toString()}
+            </IonItem>
           ))}
         </IonList>
       </IonContent>
     </IonPage>
   );
-};
-
-export default Home;
+}
