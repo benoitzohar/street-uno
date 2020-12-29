@@ -1,7 +1,7 @@
 import firebase from "firebase";
 import "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Game, RoundScores } from "../types";
+import { Game, GameDoc, RoundScores, Scores, Totals } from "../types";
 const firebaseConfig = {
   apiKey: "AIzaSyAd3iKW2j_fchyMYpz6M6HB6aT1ineaduA",
   authDomain: "street-uno.firebaseapp.com",
@@ -21,15 +21,55 @@ function getDataFromDoc(
     | firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
 ): Game | undefined {
   try {
-    const data = doc.data();
-    data!.id = doc.id;
-    data!.date = data!.date.toDate();
-    return data as Game;
+    const data = doc.data() as GameDoc;
+    const vals = Object.values(data.scores);
+    const totals = data.players.reduce((acc, player) => {
+      acc[player] = getTotal(player, data.scores);
+      return acc;
+    }, {} as Totals);
+    const players = data.players.sort((a, b) => totals[b] - totals[a]);
+
+    const game = {
+      id: doc.id,
+      date: new Intl.DateTimeFormat("default", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      }).format(data.date.toDate()),
+      players,
+      scores: data.scores,
+      rounds: vals[0]?.length || 0,
+      totals,
+      winner: getWinner(totals),
+    };
+
+    return game as Game;
   } catch (err) {
     console.error(err);
     alert("An error occured while fetching the game. Check the logs.");
   }
   return;
+}
+
+function getWinner(totals: Totals): string {
+  const players = Object.keys(totals);
+  if (!players.length) {
+    return "";
+  }
+  return players.reduce((winner: string, player: string) => {
+    if (winner && totals[player] > totals[winner]) {
+      return player;
+    }
+    return winner || player;
+  }, "");
+}
+
+export function getTotal(player: string, scores: Scores) {
+  if (!scores[player] || !scores[player].length) {
+    return 0;
+  }
+  return scores[player].reduce((sum, score) => sum + score, 0);
 }
 
 export const useGames = () => {

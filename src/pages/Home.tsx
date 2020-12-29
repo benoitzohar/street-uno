@@ -7,6 +7,7 @@ import {
   IonContent,
   IonHeader,
   IonItem,
+  IonLabel,
   IonList,
   IonPage,
   IonTitle,
@@ -40,7 +41,7 @@ export default function Home({ history }: RouteComponentProps) {
               key={game.id}
               onClick={() => history.push(`/game/${game.id}`)}
             >
-              {game.date.toString()}
+              <IonLabel>{game.date}</IonLabel>
             </IonItem>
           ))}
         </IonList>

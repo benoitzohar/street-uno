@@ -9,6 +9,7 @@ import {
   IonLoading,
   IonModal,
   IonPage,
+  IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import "./ViewGame.css";
@@ -28,13 +29,14 @@ export default function ViewGame({ match }: RouteComponentProps) {
         <IonToolbar>
           <IonButtons>
             <IonBackButton text="Back" defaultHref="/"></IonBackButton>
+            <IonTitle size="small">{game?.date}</IonTitle>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
         <IonLoading isOpen={!game} message={"Loading..."} />
-        <ScoreGrid scores={game?.scores ?? {}} />
+        <ScoreGrid game={game} />
         <IonButton
           color="primary"
           expand="full"
