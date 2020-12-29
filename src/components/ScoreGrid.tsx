@@ -14,7 +14,7 @@ export default function ScoreGrid({ game }: Props) {
   }
 
   return (
-    <IonGrid id="score-grid">
+    <IonGrid id="score-grid" className="ion-no-margin">
       <IonRow>
         {game.players.map((player) => (
           <IonCol key={player} className="header">

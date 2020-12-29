@@ -1,9 +1,13 @@
 import {
   IonButton,
+  IonButtons,
   IonContent,
+  IonHeader,
   IonInput,
   IonItem,
   IonList,
+  IonTitle,
+  IonToolbar,
 } from "@ionic/react";
 import React, { useCallback, useState } from "react";
 import { updateGame } from "../data/games";
@@ -36,30 +40,40 @@ export default function ScoreInput({ id, players, closeModal }: Props) {
   }, [closeModal, id, scores]);
 
   return (
-    <IonContent>
-      <IonList lines="full" className="ion-no-margin">
-        <IonItem lines="full">
-          {players.map((player) => (
-            <IonInput
-              key={player}
-              type="number"
-              value={scores[player]}
-              placeholder={player}
-              onIonChange={(e) =>
-                updateScore(player, parseInt(e.detail.value!, 10))
-              }
-            ></IonInput>
-          ))}
-        </IonItem>
-      </IonList>
-      <IonButton
-        color="primary"
-        expand="full"
-        onClick={saveScore}
-        disabled={Object.keys(scores).length !== players.length}
-      >
-        Save
-      </IonButton>
-    </IonContent>
+    <>
+      <IonHeader translucent>
+        <IonToolbar>
+          <IonTitle>New round</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={closeModal}>Close</IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
+        <IonList lines="full" className="ion-no-margin">
+          <IonItem lines="full">
+            {players.map((player) => (
+              <IonInput
+                key={player}
+                type="number"
+                value={scores[player]}
+                placeholder={player}
+                onIonChange={(e) =>
+                  updateScore(player, parseInt(e.detail.value!, 10))
+                }
+              ></IonInput>
+            ))}
+          </IonItem>
+        </IonList>
+        <IonButton
+          color="primary"
+          expand="full"
+          onClick={saveScore}
+          disabled={Object.keys(scores).length !== players.length}
+        >
+          Done
+        </IonButton>
+      </IonContent>
+    </>
   );
 }

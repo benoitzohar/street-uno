@@ -117,7 +117,7 @@ export const useGame = (id: string) => {
   return game;
 };
 
-export const createGame = async (players: string[]) => {
+export async function createGame(players: string[]) {
   const res = await db.collection("games").add({
     date: new Date(),
     players,
@@ -128,9 +128,9 @@ export const createGame = async (players: string[]) => {
     winner: "",
   });
   return res.id;
-};
+}
 
-export const updateGame = async (id: string, roundScores: RoundScores) => {
+export async function updateGame(id: string, roundScores: RoundScores) {
   try {
     const ref = db.collection("games").doc(id);
     const game = (await ref.get()).data() as Game;
@@ -149,4 +149,15 @@ export const updateGame = async (id: string, roundScores: RoundScores) => {
     alert("An error occured. Check the logs");
     return false;
   }
-};
+}
+
+export async function deleteGame(id: string) {
+  try {
+    await db.collection("games").doc(id).delete();
+    return true;
+  } catch (err) {
+    console.error(err);
+    alert("An error occured. Check the logs");
+    return false;
+  }
+}

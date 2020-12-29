@@ -1,12 +1,15 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
-import { useGames } from "../data/games";
+import { deleteGame, useGames } from "../data/games";
 import {
   IonButton,
   IonButtons,
   IonContent,
   IonHeader,
   IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
   IonLabel,
   IonList,
   IonPage,
@@ -35,14 +38,22 @@ export default function Home({ history }: RouteComponentProps) {
           </IonToolbar>
         </IonHeader>
 
-        <IonList>
+        <IonList lines="full" className="ion-no-margin">
           {games.map((game) => (
-            <IonItem
-              key={game.id}
-              onClick={() => history.push(`/game/${game.id}`)}
-            >
-              <IonLabel>{game.date}</IonLabel>
-            </IonItem>
+            <IonItemSliding key={game.id}>
+              <IonItem onClick={() => history.push(`/game/${game.id}`)}>
+                <IonLabel>{game.date}</IonLabel>
+              </IonItem>
+              <IonItemOptions side="end">
+                <IonItemOption
+                  color="danger"
+                  expandable
+                  onClick={() => deleteGame(game.id)}
+                >
+                  Delete
+                </IonItemOption>
+              </IonItemOptions>
+            </IonItemSliding>
           ))}
         </IonList>
       </IonContent>
