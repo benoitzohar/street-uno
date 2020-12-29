@@ -27,7 +27,10 @@ export default function ViewGame({ match }: RouteComponentProps) {
     if (!game || !game.players.length) {
       return 0;
     }
-    return game.scores[game.players[0]].length;
+    return game.players.reduce(
+      (r, player) => Math.min(r, game.scores[player].length),
+      0
+    );
   }, [game]);
 
   return (
