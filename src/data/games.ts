@@ -68,7 +68,13 @@ export function getTotal(player: string, scores: Scores) {
   if (!scores[player] || !scores[player].length) {
     return 0;
   }
-  return scores[player].reduce((sum, score) => sum + score, 0);
+  return scores[player].reduce((sum, score) => {
+    if (score === -1) {
+      //win
+      return sum;
+    }
+    return sum + score;
+  }, 0);
 }
 
 export const useGames = () => {
@@ -129,6 +135,7 @@ export async function createGame(players: string[]) {
   return res.id;
 }
 
+// unused for now
 export async function updateGame(id: string, roundScores: RoundScores) {
   try {
     const ref = db.collection("games").doc(id);
@@ -149,14 +156,19 @@ export async function updateGame(id: string, roundScores: RoundScores) {
   }
 }
 
-export async function updateRound(id: string, player: string, score: number) {
+export async function updateRound(
+  id: string,
+  player: string,
+  score: number,
+  round: number
+) {
   try {
     const ref = db.collection("games").doc(id);
     const game = (await ref.get()).data() as Game;
     const scores = {
       ...game.scores,
-      [player]: [...game.scores[player], score],
     };
+    scores[player][round] = score;
 
     await ref.update({
       scores,

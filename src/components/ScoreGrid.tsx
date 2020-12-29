@@ -35,7 +35,7 @@ export default function ScoreGrid({ game }: Props) {
         <IonRow key={idx}>
           {game.players.map((player) => (
             <IonCol key={`${player}-${idx}`} className="cell">
-              {game.scores[player][idx] === -0 ? (
+              {game.scores[player][idx] === -1 ? (
                 <IonLabel color="secondary">Win!</IonLabel>
               ) : (
                 game.scores[player][idx]

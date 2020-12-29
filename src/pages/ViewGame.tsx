@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import {
   IonBackButton,
@@ -22,6 +22,13 @@ export default function ViewGame({ match }: RouteComponentProps) {
   const id = match.params.id;
   const game = useGame(id);
   const [showModal, setShowModal] = useState(false);
+
+  const round = useMemo(() => {
+    if (!game || !game.players.length) {
+      return 0;
+    }
+    return game.scores[game.players[0]].length;
+  }, [game]);
 
   return (
     <IonPage id="new-game">
@@ -52,6 +59,7 @@ export default function ViewGame({ match }: RouteComponentProps) {
             id={id}
             players={game.players}
             closeModal={() => setShowModal(false)}
+            round={round}
           />
         )}
       </IonModal>

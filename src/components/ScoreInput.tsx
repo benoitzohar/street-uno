@@ -11,7 +11,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React, { useCallback, useState } from "react";
-import { updateGame } from "../data/games";
+import { updateRound } from "../data/games";
 import { RoundScores } from "../types";
 
 import "./ScoreGrid.css";
@@ -19,27 +19,24 @@ import "./ScoreGrid.css";
 interface Props {
   id: string;
   players: string[];
+  round: number;
   closeModal: () => void;
 }
 
-export default function ScoreInput({ id, players, closeModal }: Props) {
+export default function ScoreInput({ id, players, round, closeModal }: Props) {
   const [scores, setScores] = useState<RoundScores>({});
   const [winner, setWinner] = useState<string | null>(null);
   const updateScore = useCallback(
-    (player: string, value: number) => {
+    async (player: string, value: number) => {
       if (isNaN(value)) {
         return;
       }
       scores[player] = value;
       setScores({ ...scores });
+      await updateRound(id, player, value, round);
     },
-    [scores, setScores]
+    [id, round, scores]
   );
-
-  const saveScore = useCallback(async () => {
-    await updateGame(id, scores);
-    closeModal();
-  }, [closeModal, id, scores]);
 
   return (
     <>
@@ -75,7 +72,7 @@ export default function ScoreInput({ id, players, closeModal }: Props) {
         <IonButton
           color="primary"
           expand="full"
-          onClick={saveScore}
+          onClick={closeModal}
           disabled={
             Object.keys(scores).length !== players.length - 1 || !winner
           }
