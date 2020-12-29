@@ -1,0 +1,7 @@
+{
+  "name": "street-uno",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
