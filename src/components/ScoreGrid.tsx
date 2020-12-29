@@ -1,4 +1,4 @@
-import { IonChip, IonCol, IonGrid, IonLabel, IonRow } from "@ionic/react";
+import { IonCol, IonGrid, IonLabel, IonRow } from "@ionic/react";
 import React from "react";
 import { Game } from "../types";
 
