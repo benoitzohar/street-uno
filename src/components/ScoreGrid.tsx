@@ -1,4 +1,4 @@
-import { IonCol, IonGrid, IonRow } from "@ionic/react";
+import { IonChip, IonCol, IonGrid, IonLabel, IonRow } from "@ionic/react";
 import React from "react";
 import { Game } from "../types";
 
@@ -35,7 +35,11 @@ export default function ScoreGrid({ game }: Props) {
         <IonRow key={idx}>
           {game.players.map((player) => (
             <IonCol key={`${player}-${idx}`} className="cell">
-              {game.scores[player][idx]}
+              {game.scores[player][idx] === -0 ? (
+                <IonLabel color="secondary">Win!</IonLabel>
+              ) : (
+                game.scores[player][idx]
+              )}
             </IonCol>
           ))}
         </IonRow>

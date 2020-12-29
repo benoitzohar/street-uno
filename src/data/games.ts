@@ -27,7 +27,7 @@ function getDataFromDoc(
       acc[player] = getTotal(player, data.scores);
       return acc;
     }, {} as Totals);
-    const players = data.players.sort((a, b) => totals[b] - totals[a]);
+    const players = data.players.sort((a, b) => totals[a] - totals[b]);
 
     const game = {
       id: doc.id,
@@ -43,7 +43,6 @@ function getDataFromDoc(
       totals,
       winner: getWinner(totals),
     };
-
     return game as Game;
   } catch (err) {
     console.error(err);
@@ -135,9 +134,29 @@ export async function updateGame(id: string, roundScores: RoundScores) {
     const ref = db.collection("games").doc(id);
     const game = (await ref.get()).data() as Game;
     const scores = game.players.reduce((acc, player) => {
-      acc[player].push(roundScores[player] || 0);
+      acc[player].push(roundScores[player] || -0);
       return acc;
     }, game.scores);
+    await ref.update({
+      scores,
+      date: new Date(),
+    });
+    return true;
+  } catch (err) {
+    console.error(err);
+    alert("An error occured. Check the logs");
+    return false;
+  }
+}
+
+export async function updateRound(id: string, player: string, score: number) {
+  try {
+    const ref = db.collection("games").doc(id);
+    const game = (await ref.get()).data() as Game;
+    const scores = {
+      ...game.scores,
+      [player]: [...game.scores[player], score],
+    };
 
     await ref.update({
       scores,

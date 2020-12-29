@@ -5,6 +5,7 @@ import {
   IonHeader,
   IonInput,
   IonItem,
+  IonLabel,
   IonList,
   IonTitle,
   IonToolbar,
@@ -23,6 +24,7 @@ interface Props {
 
 export default function ScoreInput({ id, players, closeModal }: Props) {
   const [scores, setScores] = useState<RoundScores>({});
+  const [winner, setWinner] = useState<string | null>(null);
   const updateScore = useCallback(
     (player: string, value: number) => {
       if (isNaN(value)) {
@@ -49,27 +51,34 @@ export default function ScoreInput({ id, players, closeModal }: Props) {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
         <IonList lines="full" className="ion-no-margin">
-          <IonItem lines="full">
-            {players.map((player) => (
+          {players.map((player) => (
+            <IonItem lines="full" key={player}>
+              <IonLabel>{player}</IonLabel>
               <IonInput
-                key={player}
                 type="number"
                 value={scores[player]}
-                placeholder={player}
+                placeholder={winner === player ? "" : "0"}
                 onIonChange={(e) =>
                   updateScore(player, parseInt(e.detail.value!, 10))
                 }
+                disabled={winner === player}
               ></IonInput>
-            ))}
-          </IonItem>
+              {!winner && (
+                <IonButton onClick={() => setWinner(player)}>Winner!</IonButton>
+              )}
+              {winner === player && <IonLabel>Winner!</IonLabel>}
+            </IonItem>
+          ))}
         </IonList>
         <IonButton
           color="primary"
           expand="full"
           onClick={saveScore}
-          disabled={Object.keys(scores).length !== players.length}
+          disabled={
+            Object.keys(scores).length !== players.length - 1 || !winner
+          }
         >
           Done
         </IonButton>
