@@ -12,7 +12,7 @@ import {
 } from "@ionic/react";
 import React, { useCallback, useState } from "react";
 import { updateRound } from "../data/games";
-import { RoundScores } from "../types";
+import { RoundScores, Scores } from "../types";
 
 import "./ScoreGrid.css";
 
@@ -21,11 +21,27 @@ interface Props {
   players: string[];
   round: number;
   closeModal: () => void;
+  currentScores: Scores;
 }
 
-export default function ScoreInput({ id, players, round, closeModal }: Props) {
-  const [scores, setScores] = useState<RoundScores>({});
-  const [winner, setWinner] = useState<string | null>(null);
+export default function ScoreInput({
+  id,
+  players,
+  round,
+  closeModal,
+  currentScores,
+}: Props) {
+  const [currentRound] = useState(round);
+  const [currentPlayers] = useState(players);
+  const [scores, setScores] = useState<RoundScores>(
+    currentPlayers.reduce((acc, p) => {
+      acc[p] = currentScores[p][currentRound] || undefined;
+      return acc;
+    }, {} as RoundScores)
+  );
+  const [winner, setWinner] = useState<string | null>(
+    players.find((p) => scores[p] === -1) || null
+  );
   const updateScore = useCallback(
     async (player: string, value: number) => {
       if (isNaN(value)) {
@@ -33,16 +49,18 @@ export default function ScoreInput({ id, players, round, closeModal }: Props) {
       }
       scores[player] = value;
       setScores({ ...scores });
-      await updateRound(id, player, value, round);
+      await updateRound(id, player, value, currentRound);
     },
-    [id, round, scores]
+    [id, currentRound, scores]
   );
+
+  console.log("[DEBUG] currentRound:", currentRound);
 
   return (
     <>
       <IonHeader translucent>
         <IonToolbar>
-          <IonTitle>New round</IonTitle>
+          <IonTitle>Round #{currentRound}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={closeModal}>Close</IonButton>
           </IonButtons>
@@ -50,12 +68,12 @@ export default function ScoreInput({ id, players, round, closeModal }: Props) {
       </IonHeader>
       <IonContent fullscreen>
         <IonList lines="full" className="ion-no-margin">
-          {players.map((player) => (
+          {currentPlayers.map((player) => (
             <IonItem lines="full" key={player}>
               <IonLabel>{player}</IonLabel>
               <IonInput
                 type="number"
-                value={scores[player]}
+                value={scores[player] === -1 ? "" : scores[player]}
                 placeholder={winner === player ? "" : "0"}
                 onIonChange={(e) =>
                   updateScore(player, parseInt(e.detail.value!, 10))
@@ -63,7 +81,14 @@ export default function ScoreInput({ id, players, round, closeModal }: Props) {
                 disabled={winner === player}
               ></IonInput>
               {!winner && (
-                <IonButton onClick={() => setWinner(player)}>Winner!</IonButton>
+                <IonButton
+                  onClick={() => {
+                    setWinner(player);
+                    updateScore(player, -1);
+                  }}
+                >
+                  Winner!
+                </IonButton>
               )}
               {winner === player && <IonLabel>Winner!</IonLabel>}
             </IonItem>
@@ -74,7 +99,7 @@ export default function ScoreInput({ id, players, round, closeModal }: Props) {
           expand="full"
           onClick={closeModal}
           disabled={
-            Object.keys(scores).length !== players.length - 1 || !winner
+            Object.keys(scores).length !== currentPlayers.length || !winner
           }
         >
           Done

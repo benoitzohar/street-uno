@@ -6,9 +6,10 @@ import "./ScoreGrid.css";
 
 interface Props {
   game: Game | null;
+  onEdit: (round: number) => void;
 }
 
-export default function ScoreGrid({ game }: Props) {
+export default function ScoreGrid({ game, onEdit }: Props) {
   if (!game) {
     return null;
   }
@@ -32,7 +33,12 @@ export default function ScoreGrid({ game }: Props) {
       )}
 
       {Array.from(Array(game.rounds)).map((_, idx) => (
-        <IonRow key={idx}>
+        <IonRow
+          key={idx}
+          onClick={() => {
+            onEdit(idx);
+          }}
+        >
           {game.players.map((player) => (
             <IonCol key={`${player}-${idx}`} className="cell">
               {game.scores[player][idx] === -1 ? (

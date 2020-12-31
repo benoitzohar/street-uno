@@ -23,15 +23,18 @@ export default function ViewGame({ match }: RouteComponentProps) {
   const game = useGame(id);
   const [showModal, setShowModal] = useState(false);
 
-  const round = useMemo(() => {
+  const getRound = () => {
     if (!game || !game.players.length) {
       return 0;
     }
+    console.log("[DEBUG] game.scores:", game.scores);
     return game.players.reduce(
       (r, player) => Math.min(r, game.scores[player].length),
-      0
+      999
     );
-  }, [game]);
+  };
+
+  const [round, setRound] = useState<number>(getRound());
 
   return (
     <IonPage id="new-game">
@@ -46,7 +49,13 @@ export default function ViewGame({ match }: RouteComponentProps) {
 
       <IonContent fullscreen>
         <IonLoading isOpen={!game} message={"Loading..."} />
-        <ScoreGrid game={game} />
+        <ScoreGrid
+          game={game}
+          onEdit={(r: number) => {
+            setRound(r);
+            setShowModal(true);
+          }}
+        />
         <IonButton
           color="primary"
           expand="full"
@@ -63,6 +72,7 @@ export default function ViewGame({ match }: RouteComponentProps) {
             players={game.players}
             closeModal={() => setShowModal(false)}
             round={round}
+            currentScores={game.scores}
           />
         )}
       </IonModal>
