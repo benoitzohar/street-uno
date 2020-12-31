@@ -54,8 +54,6 @@ export default function ScoreInput({
     [id, currentRound, scores]
   );
 
-  console.log("[DEBUG] currentRound:", currentRound);
-
   return (
     <>
       <IonHeader translucent>

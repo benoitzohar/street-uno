@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router";
 import {
   IonBackButton,
@@ -27,7 +27,6 @@ export default function ViewGame({ match }: RouteComponentProps) {
     if (!game || !game.players.length) {
       return 0;
     }
-    console.log("[DEBUG] game.scores:", game.scores);
     return game.players.reduce(
       (r, player) => Math.min(r, game.scores[player].length),
       999
