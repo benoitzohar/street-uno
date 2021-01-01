@@ -96,9 +96,7 @@ export default function ScoreInput({
           color="primary"
           expand="full"
           onClick={closeModal}
-          disabled={
-            Object.keys(scores).length !== currentPlayers.length || !winner
-          }
+          disabled={Object.keys(scores).length !== currentPlayers.length}
         >
           Done
         </IonButton>
