@@ -91,6 +91,7 @@ export const useGames = () => {
             games.push(data);
           }
         });
+        games.sort((a, b) => a.date < b.date);
         setGames(games);
       });
     return () => {
