@@ -31,6 +31,7 @@ function getDataFromDoc(
 
     const game = {
       id: doc.id,
+      rawDate: data.date.toDate(),
       date: new Intl.DateTimeFormat("default", {
         month: "short",
         day: "numeric",
@@ -91,7 +92,7 @@ export const useGames = () => {
             games.push(data);
           }
         });
-        games.sort((a, b) => +(new Date(a.date)) - (+new Date(b.date)));
+        games.sort((a, b) => +(b.rawDate) - (+a.rawDate));
         setGames(games);
       });
     return () => {

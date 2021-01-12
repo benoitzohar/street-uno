@@ -9,6 +9,7 @@ export type RoundScores = { [player: string]: number | undefined };
 
 export interface Game {
   id: string;
+  rawDate: Date;
   date: string;
   players: string[];
   scores: Scores;
