@@ -92,7 +92,7 @@ export const useGames = () => {
             games.push(data);
           }
         });
-        games.sort((a, b) => +(b.rawDate) - (+a.rawDate));
+        games.sort((a, b) => +b.rawDate - +a.rawDate);
         setGames(games);
       });
     return () => {
@@ -101,6 +101,88 @@ export const useGames = () => {
   }, []);
 
   return games;
+};
+
+export const useStats = (games: Game[]) => {
+  const [data, setData] = useState<any>({});
+
+  useEffect(() => {
+    const gameWins: any = {};
+    games.forEach((game) => {
+      if (!gameWins[game.winner]) {
+        gameWins[game.winner] = 0;
+      }
+      gameWins[game.winner] += 1;
+    });
+    const { wonGames, wonGamesNb } = Object.keys(gameWins).reduce(
+      (acc, winner) => {
+        if (acc.wonGamesNb < gameWins[winner]) {
+          acc.wonGames = winner;
+          acc.wonGamesNb = gameWins[winner];
+        }
+        return acc;
+      },
+      { wonGames: "", wonGamesNb: 0 }
+    );
+
+    const roundWins: any = {};
+    games.forEach((game) => {
+      Object.keys(game.scores).forEach((player) => {
+        if (!roundWins[player]) {
+          roundWins[player] = 0;
+        }
+
+        roundWins[player] += game.scores[player].filter((a) => a === -1).length;
+      });
+    });
+    const { wonRounds, wonRoundsNb } = Object.keys(roundWins).reduce(
+      (acc, winner) => {
+        if (acc.wonRoundsNb < roundWins[winner]) {
+          acc.wonRounds = winner;
+          acc.wonRoundsNb = roundWins[winner];
+        }
+        return acc;
+      },
+      { wonRounds: "", wonRoundsNb: 0 }
+    );
+
+    const roundScores: any = {};
+    games.forEach((game) => {
+      Object.keys(game.scores).forEach((player) => {
+        if (!roundScores[player]) {
+          roundScores[player] = 0;
+        }
+        let sc = Math.max(...game.scores[player]);
+        if (sc > roundScores[player]) {
+          roundScores[player] = sc;
+        }
+      });
+    });
+    const { highScore, highScoreNb } = Object.keys(roundScores).reduce(
+      (acc, winner) => {
+        if (acc.highScoreNb < roundScores[winner]) {
+          acc.highScore = winner;
+          acc.highScoreNb = roundScores[winner];
+        }
+        return acc;
+      },
+      { highScore: "", highScoreNb: 0 }
+    );
+
+    setData({
+      gameWins,
+      wonGames,
+      wonGamesNb,
+      roundWins,
+      wonRounds,
+      wonRoundsNb,
+      roundScores,
+      highScore,
+      highScoreNb,
+    });
+  }, [games]);
+
+  return data;
 };
 
 export const useGame = (id: string) => {

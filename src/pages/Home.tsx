@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
-import { deleteGame, useGames } from "../data/games";
+import { deleteGame, useGames, useStats } from "../data/games";
 import {
   IonButton,
   IonButtons,
@@ -12,6 +12,7 @@ import {
   IonItemSliding,
   IonLabel,
   IonList,
+  IonListHeader,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -20,6 +21,7 @@ import "./Home.css";
 
 export default function Home({ history }: RouteComponentProps) {
   const games = useGames();
+  const stats = useStats(games);
 
   return (
     <IonPage id="home-page">
@@ -39,6 +41,44 @@ export default function Home({ history }: RouteComponentProps) {
         </IonHeader>
 
         <IonList lines="full" className="ion-no-margin">
+          <IonListHeader>
+            <IonLabel color="primary">Stats</IonLabel>
+          </IonListHeader>
+          <IonItem>
+            <IonLabel color="secondary">Most won games </IonLabel>
+            <IonLabel>
+              {stats.wonGames} ({stats.wonGamesNb})
+            </IonLabel>
+          </IonItem>
+          <IonItem>
+            <IonLabel color="secondary">Most won rounds </IonLabel>
+            <IonLabel>
+              {stats.wonRounds} ({stats.wonRoundsNb})
+            </IonLabel>
+          </IonItem>
+          <IonItem>
+            <IonLabel color="secondary">Highest score in one round </IonLabel>
+            <IonLabel>
+              {stats.highScore} ({stats.highScoreNb})
+            </IonLabel>
+          </IonItem>
+          {Object.keys(stats.roundWins || {})
+            .sort()
+            .map((pl) => (
+              <IonItem key={pl}>
+                <IonLabel color="secondary">Stats for {pl}</IonLabel>
+                <IonLabel>
+                  Games won: {stats.gameWins[pl] || 0}
+                  <br />
+                  Rounds won: {stats.roundWins[pl]}
+                  <br />
+                  Highest round score: {stats.roundScores[pl]}
+                </IonLabel>
+              </IonItem>
+            ))}
+          <IonListHeader>
+            <IonLabel color="primary">Games</IonLabel>
+          </IonListHeader>
           {games.map((game) => (
             <IonItemSliding key={game.id}>
               <IonItem onClick={() => history.push(`/game/${game.id}`)}>
