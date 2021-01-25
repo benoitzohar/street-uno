@@ -45,6 +45,28 @@ export default function Home({ history }: RouteComponentProps) {
             <IonLabel color="primary">Stats</IonLabel>
           </IonListHeader>
           <IonItem>
+            <IonLabel color="secondary">Games played </IonLabel>
+            <IonLabel>
+              {Number(
+                Object.values(stats.gameWins || {}).reduce(
+                  (acc: any, w: any) => acc + w,
+                  0
+                )
+              )}
+            </IonLabel>
+          </IonItem>
+          <IonItem>
+            <IonLabel color="secondary">Rounds played </IonLabel>
+            <IonLabel>
+              {Number(
+                Object.values(stats.roundWins || {}).reduce(
+                  (acc: any, w: any) => acc + w,
+                  0
+                )
+              )}
+            </IonLabel>
+          </IonItem>
+          <IonItem>
             <IonLabel color="secondary">Most won games </IonLabel>
             <IonLabel>
               {stats.wonGames} ({stats.wonGamesNb})
