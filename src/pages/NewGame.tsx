@@ -21,10 +21,10 @@ const NewGame: React.FC<Props> = ({ history }: Props) => {
   const [players, setPlayers] = useState<string[]>([
     "Alex",
     "Ben",
-    "Katy",
-    "Manon",
-    "Nico",
-    "Val",
+    "Béa",
+    "Mat",
+    "Emilie",
+    "Thomas",
   ]);
 
   const create = useCallback(async () => {
